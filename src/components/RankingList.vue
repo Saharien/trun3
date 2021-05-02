@@ -1,9 +1,5 @@
 <template>
   <div id="app">
-    <div>
-      <img id="trunImage" src="@/assets/logo.png" />
-    </div>
-
     <div class="buttonRow">
       <button
         v-bind:class="{
@@ -83,8 +79,9 @@ export default {
   data() {
     return {
       showWhat: "run/hitlist", // Alternative 'biking/hitlist'
-      timeSpan: "4",
+      timeSpan: "5",
       activities: [],
+      //apiUrl: "http://localhost:80/api",
       apiUrl: "https://atlantis.mkarl.de:443/api",
       pass: "gi9k3C4F4FER",
       urlToLoad: "",
@@ -98,18 +95,20 @@ export default {
     });
   },
   methods: {
-    loadData: function () {
+    loadData: async function () {
       this.urlToLoad = this.apiUrl + "/" + this.showWhat + "/" + this.timeSpan;
 
-      async function getFetchData(urlToLoad, pass) {
+      const token = await this.$auth.getTokenSilently();
+
+      async function getFetchData(urlToLoad, pass, token) {
         const response = await fetch(urlToLoad, {
-          headers: { pass: pass },
+          headers: { pass: pass, Authorization: `Bearer ${token}` },
         });
         const myJson = await response.json(); //extract JSON from the http response
         return myJson;
       }
 
-      getFetchData(this.urlToLoad, this.pass).then((a) => {
+      getFetchData(this.urlToLoad, this.pass, token).then((a) => {
         let rank = 0;
         let lastTotalAmount = 0;
 
@@ -240,13 +239,6 @@ td {
 
 .button-row {
   height: 100px;
-}
-
-#trunImage {
-  height: 100px;
-  margin-left: auto;
-  margin-right: auto;
-  margin-bottom: 0.5em;
 }
 
 #app {
