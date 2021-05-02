@@ -14,6 +14,8 @@ export default {
     HelloWorld
   }
 }
+
+document.title = 'T.RUN Dashboard';
 </script>
 
 <style>
