@@ -8,7 +8,7 @@
         }"
         v-on:click="showRuns"
       >
-        <i class="fas fa-running"></i> Laufen
+        Laufen
       </button>
       <button
         v-bind:class="{
@@ -17,7 +17,7 @@
         }"
         v-on:click="showBikings"
       >
-        <i class="fas fa-biking"></i> Rad
+        Rad
       </button>
       <button
         v-bind:class="{
