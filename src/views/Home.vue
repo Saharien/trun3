@@ -17,7 +17,7 @@
         <!-- show login when not authenticated -->
         <div v-if="!$auth.isAuthenticated">
           <v-btn class="ml-3 mt-3 mb-3" depressed @click="login">Einloggen</v-btn>
-          <div class="ml-4 mt-0 mb-3">
+          <div class="ml-4 mt-0 mb-3 mr-4">
             Wir haben einen neuen Login-Screen - dieser kann jetzt das
             Passwort speichern. Die Zugangsdaten findet Ihr im Confluence und in
             Strava im Club bei den Beiträgen.
