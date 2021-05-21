@@ -54,7 +54,7 @@
       dense
       outlined
       type="info"
-      
+      color="#46bfe0"
       class = "mt-7">
       F&uuml;r diese Sportart sind in diesem Monat keine Daten vorhanden.
       </v-alert>
