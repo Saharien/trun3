@@ -1,55 +1,36 @@
 <template>
   <div id="app">
-    <div class="buttonRow">
-      <button
-        v-bind:class="{
-          'selected-button': showWhat == 'run/hitlist',
-          'selection-button': showWhat != 'run/hitlist',
-        }"
-        v-on:click="showRuns"
-      >
-        Laufen
-      </button>
-      <button
-        v-bind:class="{
-          'selected-button': showWhat == 'biking/hitlist',
-          'selection-button': showWhat != 'biking/hitlist',
-        }"
-        v-on:click="showBikings"
-      >
-        Rad
-      </button>
-      <button
-        v-bind:class="{
-          'selected-button': timeSpan == 4,
-          'selection-button': timeSpan != 4,
-        }"
-        v-on:click="setApril"
-      >
-        April
-      </button>
-      <button
-        v-bind:class="{
-          'selected-button': timeSpan == 5,
-          'selection-button': timeSpan != 5,
-        }"
-        v-on:click="setMai"
-      >
-        Mai
-      </button>
-      <button
-        v-bind:class="{
-          'selected-button': timeSpan == 6,
-          'selection-button': timeSpan != 6,
-        }"
-        v-on:click="setJuni"
-      >
-        Juni
-      </button>
-    </div>
+    <v-row>
+      <v-btn-toggle class="pl-3 pt-3 pb-3" v-model="toggleSport" borderless>
+        <v-btn v-on:click="showRuns">
+          <v-icon>mdi-run</v-icon>
+        </v-btn>
+
+        <v-btn v-on:click="showBikings">
+          <v-icon>mdi-bike-fast</v-icon>
+        </v-btn>
+      </v-btn-toggle>
+      <v-btn-toggle class="pl-3 pt-3 pb-3" v-model="toggleTimespan" borderless>
+        <v-btn value="4" v-on:click="setApril">
+          <span>4</span>
+        </v-btn>
+
+        <v-btn value="5" v-on:click="setMai">
+          <span>5</span>
+        </v-btn>
+
+        <v-btn value="6" v-on:click="setJuni">
+          <span>6</span>
+        </v-btn>
+
+        <v-btn value="sum" v-on:click="setJuni">
+          <v-icon>mdi-sigma</v-icon>
+        </v-btn>
+      </v-btn-toggle>
+    </v-row>
 
     <div class="tablecontent">
-      <table>
+      <table v-if="sortedActivities.length > 0">
         <tr>
           <th @click="sort('rank')">Platz</th>
           <th>Name</th>
@@ -69,6 +50,14 @@
           </td>
         </tr>
       </table>
+      <v-alert v-else
+      dense
+      outlined
+      type="info"
+      
+      class = "mt-7">
+      F&uuml;r diese Sportart sind in diesem Monat keine Daten vorhanden.
+      </v-alert>
     </div>
   </div>
 </template>
@@ -78,6 +67,9 @@ export default {
   setup() {},
   data() {
     return {
+      toggleSport: 0,
+      toggleTimespan: "5",
+      
       showWhat: "run/hitlist", // Alternative 'biking/hitlist'
       timeSpan: "5",
       activities: [],
@@ -179,11 +171,11 @@ export default {
 <style scoped>
 #app {
   text-align: left;
-  padding: 0;
   font-family: "Nunito Sans", sans-serif;
   font-weight: 100;
   color: #262626;
   font-size: 16px;
+  margin-left: 1em;
 }
 
 a {
@@ -235,10 +227,6 @@ td {
 .selection-button:active {
   position: relative;
   top: 1px;
-}
-
-.button-row {
-  height: 100px;
 }
 
 #app {
