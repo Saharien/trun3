@@ -1,7 +1,7 @@
 <template>
   <div id="app">
-    <v-row>
-      <v-btn-toggle class="pl-3 pt-3 pb-3" v-model="toggleSport" borderless>
+    <v-row class="pl-3 pt-6 pb-0">
+      <v-btn-toggle v-model="toggleSport" borderless>
         <v-btn v-on:click="showRuns">
           <v-icon>mdi-run</v-icon>
         </v-btn>
@@ -10,55 +10,60 @@
           <v-icon>mdi-bike-fast</v-icon>
         </v-btn>
       </v-btn-toggle>
-      <v-btn-toggle class="pl-3 pt-3 pb-3" v-model="toggleTimespan" borderless>
+      <v-btn-toggle class="pl-3" v-model="toggleTimespan" borderless>
         <v-btn value="4" v-on:click="setApril">
-          <span>4</span>
+          <span>APR</span>
         </v-btn>
 
         <v-btn value="5" v-on:click="setMai">
-          <span>5</span>
+          <span>MAI</span>
         </v-btn>
 
         <v-btn value="6" v-on:click="setJuni">
-          <span>6</span>
+          <span>JUN</span>
         </v-btn>
 
-        <v-btn value="sum" v-on:click="setJuni">
+        <v-btn value="S" v-on:click="setSum">
           <v-icon>mdi-sigma</v-icon>
         </v-btn>
       </v-btn-toggle>
     </v-row>
 
-    <div class="tablecontent">
-      <table v-if="sortedActivities.length > 0">
-        <tr>
-          <th @click="sort('rank')">Platz</th>
-          <th>Name</th>
-          <th @click="sort('distance')">Strecke</th>
-          <th @click="sort('heightMeter')" v-if="showWhat == 'biking/hitlist'">
-            H&ouml;henmeter
-          </th>
-        </tr>
-        <tr v-for="activity in sortedActivities" :key="activity.id">
-          <td>{{ activity.rank }}</td>
-          <td>
-            <a :href="activity._id.url">{{ activity._id.name }} </a>
-          </td>
-          <td>{{ activity.distance }} km</td>
-          <td v-if="showWhat == 'biking/hitlist'">
-            {{ activity.heightMeter }} m
-          </td>
-        </tr>
-      </table>
-      <v-alert v-else
-      dense
-      outlined
-      type="info"
-      color="#46bfe0"
-      class = "mt-7">
-      F&uuml;r diese Sportart sind in diesem Monat keine Daten vorhanden.
-      </v-alert>
-    </div>
+    <v-row v-if="sortedActivities.length > 0">
+      <v-col>
+        <table>
+          <tr>
+            <th @click="sort('rank')">Platz</th>
+            <th>Name</th>
+            <th @click="sort('distance')">Strecke</th>
+            <th
+              @click="sort('heightMeter')"
+              v-if="showWhat == 'biking/hitlist'"
+            >
+              Anstieg
+            </th>
+          </tr>
+          <tr v-for="activity in sortedActivities" :key="activity.id">
+            <td>{{ activity.rank }}</td>
+            <td>
+              <a :href="activity._id.url">{{ activity._id.name }} </a>
+            </td>
+            <td>{{ activity.distance }} km</td>
+            <td v-if="showWhat == 'biking/hitlist'">
+              {{ activity.heightMeter }} m
+            </td>
+          </tr>
+        </table>
+      </v-col>
+    </v-row>
+
+    <v-row v-if="sortedActivities.length == 0">
+      <v-col>
+        <v-alert text outlined colored-border class="mt-3">
+          F&uuml;r diese Sportart sind in diesem Monat keine Daten vorhanden.
+        </v-alert>
+      </v-col>
+    </v-row>
   </div>
 </template>
 
@@ -69,7 +74,7 @@ export default {
     return {
       toggleSport: 0,
       toggleTimespan: "5",
-      
+
       showWhat: "run/hitlist", // Alternative 'biking/hitlist'
       timeSpan: "5",
       activities: [],
@@ -145,6 +150,10 @@ export default {
       this.timeSpan = 6;
       this.loadData();
     },
+    setSum: function () {
+      this.timeSpan = 'S';
+      this.loadData();
+    },    
     sort: function (s) {
       //if s == current sort, reverse
       if (s === this.currentSort) {
