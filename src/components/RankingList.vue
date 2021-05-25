@@ -58,11 +58,13 @@
     </v-row>
 
     <v-row v-if="sortedActivities.length == 0">
+      <v-card width="75%" flat>
       <v-col>
         <v-alert text outlined colored-border class="mt-3">
           F&uuml;r diese Sportart sind in diesem Monat keine Daten vorhanden.
         </v-alert>
       </v-col>
+      </v-card>
     </v-row>
   </div>
 </template>
@@ -151,9 +153,9 @@ export default {
       this.loadData();
     },
     setSum: function () {
-      this.timeSpan = 'S';
+      this.timeSpan = "S";
       this.loadData();
-    },    
+    },
     sort: function (s) {
       //if s == current sort, reverse
       if (s === this.currentSort) {
