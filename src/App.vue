@@ -23,7 +23,7 @@
           fab
           outlined
           @click="gotoRoute('/')">
-          <v-icon> mdi-card-text-outline </v-icon>
+          <v-icon> mdi-clipboard-list-outline </v-icon>
         </v-btn>
 
         <v-btn

@@ -9,10 +9,10 @@
 <script>
 import RankingList from "@/components/RankingList.vue";
 export default {
-name: "Home",
-components: {
+  name: "Home",
+  components: {
     RankingList,
-}
+  },
 };
 </script>
 
