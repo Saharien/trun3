@@ -75,7 +75,7 @@ export default {
   data() {
     return {
       toggleSport: 0,
-      toggleTimespan: "5",
+      toggleTimespan: "6",
 
       showWhat: "run/hitlist", // Alternative 'biking/hitlist'
       timeSpan: "5",
