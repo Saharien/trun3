@@ -1,26 +1,19 @@
 <template>
-  <div id="app">
-    <v-row class="pl-3 pt-6 pb-0">
-      <v-card class="mx-auto" max-width="95%">
-        <v-list-item three-line>
-          <v-list-item-content>
-            <v-list-item-title class="headline mb-1">
-              Laufkilometer je Monat
-            </v-list-item-title>
-
-            <div id="chart">
-              <apexchart
-                type="line"
-                height="350"
-                :options="chartOptions"
-                :series="series"
-              ></apexchart>
-            </div>
-          </v-list-item-content>
-        </v-list-item>
-      </v-card>
-    </v-row>
-  </div>
+  <v-card title>
+    <v-card-title> Laufkilometer je Monat </v-card-title>
+    <v-list-item three-line>
+      <v-list-item-content>
+        <div id="chart">
+          <apexchart
+            type="line"
+            height="350"
+            :options="chartOptions"
+            :series="series"
+          ></apexchart>
+        </div>
+      </v-list-item-content>
+    </v-list-item>
+  </v-card>
 </template>
 
 <script>
@@ -115,7 +108,7 @@ export default {
         return myJson;
       }
 
-      getFetchData(this.apiUrl, this.pass, token).then((a) => {  
+      getFetchData(this.apiUrl, this.pass, token).then((a) => {
         a.data.forEach((element) =>
           this.series[0].data.push(element.totalAmount)
         );
@@ -126,5 +119,4 @@ export default {
 };
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

@@ -1,11 +1,15 @@
 <template>
-  <div class="dashboard">
-    <v-main class="pt-4 pl-4">
+  <v-row>
+    <v-col cols="4">
       <LongestRuns />
+    </v-col>
+    <v-col cols="4">
       <LongestBikings class="pb-4" />
+    </v-col>
+    <v-col cols="4">
       <RunSumMonth class="pb-4" />
-    </v-main>
-  </div>
+    </v-col>
+  </v-row>
 </template>
 
 <script>
@@ -22,5 +26,4 @@ export default {
 };
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

@@ -1,15 +1,8 @@
 <template>
-  <div id="app">
-    <v-row class="pl-3 pt-6 pb-0">
-      <v-btn-toggle v-model="toggleSport" borderless>
-        <v-btn v-on:click="showRuns">
-          <v-icon>mdi-run</v-icon>
-        </v-btn>
-
-        <v-btn v-on:click="showBikings">
-          <v-icon>mdi-bike-fast</v-icon>
-        </v-btn>
-      </v-btn-toggle>
+  <v-card tile>
+    <v-card-title>
+      <h1>Rangliste</h1>
+      <v-spacer></v-spacer>
       <v-btn-toggle class="pl-3" v-model="toggleTimespan" borderless>
         <v-btn value="4" v-on:click="setApril">
           <span>APR</span>
@@ -27,46 +20,32 @@
           <v-icon>mdi-sigma</v-icon>
         </v-btn>
       </v-btn-toggle>
-    </v-row>
+    </v-card-title>
 
-    <v-row v-if="sortedActivities.length > 0">
-      <v-col>
-        <table>
-          <tr>
-            <th @click="sort('rank')">Platz</th>
-            <th>Name</th>
-            <th @click="sort('distance')">Strecke</th>
-            <th
-              @click="sort('heightMeter')"
-              v-if="showWhat == 'biking/hitlist'"
-            >
-              Anstieg
-            </th>
-          </tr>
-          <tr v-for="activity in sortedActivities" :key="activity.id">
-            <td>{{ activity.rank }}</td>
-            <td>
-              <a :href="activity._id.url">{{ activity._id.name }} </a>
-            </td>
-            <td>{{ activity.distance }} km</td>
-            <td v-if="showWhat == 'biking/hitlist'">
-              {{ activity.heightMeter }} m
-            </td>
-          </tr>
-        </table>
-      </v-col>
-    </v-row>
-
-    <v-row v-if="sortedActivities.length == 0">
-      <v-card width="75%" flat>
-      <v-col>
-        <v-alert text outlined colored-border class="mt-3">
-          F&uuml;r diese Sportart sind in diesem Monat keine Daten vorhanden.
-        </v-alert>
-      </v-col>
-      </v-card>
-    </v-row>
-  </div>
+    <v-tabs v-model="tab">
+      <v-tab key="run" v-on:click="showRuns">Laufen</v-tab>
+      <v-tab key="cycle" v-on:click="showBikings">Radfahren</v-tab>
+    </v-tabs>
+    <v-tabs-items v-model="tab">
+      <v-tab-item key="run">
+        <v-data-table
+          :headers="headersRun"
+          :items="runActivities"
+          :items-per-page="-1"
+          :sort-by="['rank']"
+        >
+        </v-data-table>
+      </v-tab-item>
+      <v-tab-item key="cycle">
+        <v-data-table
+          :headers="headersCycle"
+          :items="cycleActivities"
+          :items-per-page="-1"
+          :sort-by="['rank']"
+        ></v-data-table>
+      </v-tab-item>
+    </v-tabs-items>
+  </v-card>
 </template>
 
 <script>
@@ -74,28 +53,38 @@ export default {
   setup() {},
   data() {
     return {
+      tab: null,
+      headersRun: [
+        { text: "Platz", value: "rank" },
+        { text: "Name", value: "_id.name" },
+        { text: "Strecke", value: "distance" },
+      ],
+      headersCycle: [
+        { text: "Platz", value: "rank" },
+        { text: "Name", value: "_id.name" },
+        { text: "Strecke", value: "distance" },
+        { text: "Anstieg", value: "heightMeter" },
+      ],
       toggleSport: 0,
       toggleTimespan: "6",
 
-      showWhat: "run/hitlist", // Alternative 'biking/hitlist'
       timeSpan: "5",
-      activities: [],
+      runActivities: [],
+      cycleActivities: [],
       //apiUrl: "http://localhost:80/api",
       apiUrl: "https://atlantis.mkarl.de:443/api",
       pass: "gi9k3C4F4FER",
       urlToLoad: "",
-      currentSort: "rank",
-      currentSortDir: "asc",
     };
   },
   mounted: function () {
-    this.$nextTick(function () {
-      this.loadData();
+    this.$nextTick(async () => {
+      this.runActivities = await this.loadData();
     });
   },
   methods: {
-    loadData: async function () {
-      this.urlToLoad = this.apiUrl + "/" + this.showWhat + "/" + this.timeSpan;
+    loadData: async function (dataToShow = "run/hitlist") {
+      const urlToLoad = `${this.apiUrl}/${dataToShow}/${this.timeSpan}`;
 
       const token = await this.$auth.getTokenSilently();
 
@@ -107,38 +96,24 @@ export default {
         return myJson;
       }
 
-      getFetchData(this.urlToLoad, this.pass, token).then((a) => {
-        let rank = 0;
-        let lastTotalAmount = 0;
+      const response = await getFetchData(urlToLoad, this.pass, token);
+      const data = response.data.map((element, index) => ({
+        _id: element._id,
+        distance:
+          Math.round((element.totalAmount + Number.EPSILON) * 100) / 100,
+        heightMeter: Math.round((element.elevgain + Number.EPSILON) * 1) / 1,
+        rank: index + 1,
+      }));
 
-        this.activities = a.data;
-
-        // Platzierung setzen
-        this.activities.forEach(function (element) {
-          // calculate distance
-          element.distance =
-            Math.round((element.totalAmount + Number.EPSILON) * 100) / 100;
-
-          // calculate height meter
-          element.heightMeter =
-            Math.round((element.elevgain + Number.EPSILON) * 1) / 1;
-
-          if (element.totalAmount != lastTotalAmount) {
-            rank++;
-          }
-
-          element.rank = rank;
-          lastTotalAmount = element.totalAmount;
-        });
-      });
+      return data;
     },
-    showRuns: function () {
-      this.showWhat = "run/hitlist";
-      this.loadData();
+    showRuns: async function () {
+      if (this.runActivities.length === 0)
+        this.runActivities = await this.loadData("run/hitlist");
     },
-    showBikings: function () {
-      this.showWhat = "biking/hitlist";
-      this.loadData();
+    showBikings: async function () {
+      if (this.cycleActivities.length === 0)
+        this.cycleActivities = await this.loadData("biking/hitlist");
     },
     setApril: function () {
       this.timeSpan = 4;
@@ -156,91 +131,10 @@ export default {
       this.timeSpan = "S";
       this.loadData();
     },
-    sort: function (s) {
-      //if s == current sort, reverse
-      if (s === this.currentSort) {
-        this.currentSortDir = this.currentSortDir === "asc" ? "desc" : "asc";
-      }
-      this.currentSort = s;
-    },
   },
-  computed: {
-    sortedActivities: function () {
-      let activities = this.activities;
-      return activities.sort((a, b) => {
-        let modifier = 1;
-        if (this.currentSortDir === "desc") modifier = -1;
-        if (a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
-        if (a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
-        return 0;
-      });
-    },
-  },
+  computed: {},
 };
 </script>
 
 <style scoped>
-#app {
-  text-align: left;
-  font-family: "Nunito Sans", sans-serif;
-  font-weight: 100;
-  color: #262626;
-  font-size: 16px;
-  margin-left: 1em;
-}
-
-a {
-  color: rgb(0, 0, 0);
-}
-
-th,
-td {
-  padding-right: 18px;
-  padding-top: 6px;
-  text-align: left;
-}
-
-.selected-button {
-  background-color: #46bfe0;
-  border-radius: 4px;
-  border: 1px solid #46bfe0;
-  display: inline-block;
-  cursor: pointer;
-  color: #ffffff;
-  font-family: "Nunito Sans", sans-serif;
-  font-size: 17px;
-  margin-right: 4px;
-  padding: 4px 7px;
-  text-decoration: none;
-  outline: none;
-}
-
-.selected-button:active {
-  position: relative;
-  top: 1px;
-}
-
-.selection-button {
-  background-color: #ffffff;
-  border-radius: 4px;
-  border: 1px solid #46bfe0;
-  display: inline-block;
-  cursor: pointer;
-  color: #46bfe0;
-  font-family: "Nunito Sans", sans-serif;
-  font-size: 17px;
-  margin-right: 4px;
-  padding: 4px 7px;
-  text-decoration: none;
-  outline: none;
-}
-
-.selection-button:active {
-  position: relative;
-  top: 1px;
-}
-
-#app {
-  width: 500px;
-}
 </style>

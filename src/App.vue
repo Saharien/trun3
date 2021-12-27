@@ -1,77 +1,71 @@
 <template>
-  <div id="app">
-    <v-app>
-      <v-app-bar app flat dark color="#46bfe0">
-        <v-img
-          src="@/assets/logo.png"
-          max-height="50"
-          max-width="51"
-          contain
-        ></v-img>
+  <v-app app>
+    <v-app-bar app clipped-left flat dark color="#46bfe0">
+      <v-img
+        src="@/assets/logo.png"
+        max-height="50"
+        max-width="51"
+        contain
+      ></v-img>
 
-        <v-toolbar-title>T.RUN</v-toolbar-title>
-        <v-spacer></v-spacer>
+      <v-toolbar-title>T.RUN</v-toolbar-title>
+      <v-spacer></v-spacer>
+      <v-btn
+        class="ml-3 mt-3 mb-3"
+        light
+        depressed
+        @click="login"
+        v-if="!$auth.loading && !$auth.isAuthenticated"
+        >Einloggen</v-btn
+      >
+      <v-btn
+        class="ml-3 mt-3 mb-3"
+        light
+        depressed
+        @click="logout"
+        v-if="!$auth.loading && $auth.isAuthenticated"
+        >Ausloggen</v-btn
+      >
+    </v-app-bar>
 
-        <span v-if="$auth.isAuthenticated">
-
-        <v-btn
-          v-if="$route.name != 'Home'"
-          color="white"
-          depressed
-          small
-          class="mx-2"
-          fab
-          outlined
-          @click="gotoRoute('/')">
-          <v-icon> mdi-clipboard-list-outline </v-icon>
-        </v-btn>
-
-        <v-btn
-          v-if="$route.name != 'Dashboard'"
-          color="white"
-          depressed
-          small
-          class="mx-2"
-          fab
-          outlined
-          @click="gotoRoute('Dashboard')">
-          <v-icon> mdi-view-dashboard-outline </v-icon>
-        </v-btn>
-
-        </span>
-
-
-      </v-app-bar>
-      <v-main>
-        <!-- Check that the SDK client is not currently loading before accessing is methods -->
-        <div v-if="!$auth.loading">
-          <!-- show login when not authenticated -->
-          <div v-if="!$auth.isAuthenticated">
-            <v-btn class="ml-3 mt-3 mb-3" depressed @click="login"
-              >Einloggen</v-btn
+    <v-navigation-drawer app clipped>
+      <v-list dense nav>
+        <v-list-item link>
+          <v-list-item-content>
+            <v-list-item-title @click="gotoRoute('/')">Home</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item link v-if="!$auth.loading && $auth.isAuthenticated">
+          <v-list-item-content>
+            <v-list-item-title @click="gotoRoute('/hitlist')"
+              >Statistik</v-list-item-title
             >
-            <div class="ml-4 mt-0 mb-3 mr-4">
-              Wir haben einen neuen Login-Screen - dieser kann jetzt das
-              Passwort speichern. Die Zugangsdaten findet Ihr im Confluence und
-              in Strava im Club bei den Beiträgen.
-            </div>
-          </div>
-
-          <!-- show content and logout when authenticated -->
-          <div v-if="$auth.isAuthenticated">
-            <router-view />
-            <v-btn class="ml-3 mt-3 mb-3" depressed @click="logout"
-              >Ausloggen</v-btn
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item link v-if="!$auth.loading && $auth.isAuthenticated">
+          <v-list-item-content>
+            <v-list-item-title @click="gotoRoute('/dashboard')"
+              >Dashboard</v-list-item-title
             >
-          </div>
-        </div>
-      </v-main>
-    </v-app>
-  </div>
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
+    </v-navigation-drawer>
+
+    <v-main>
+      <v-container fluid>
+        <router-view />
+      </v-container>
+    </v-main>
+    <v-footer app light>
+      <v-col class="text-center" cols="12">
+        <span>Made with 🍺 in Passau.</span>
+      </v-col>
+    </v-footer>
+  </v-app>
 </template>
 
-<style>
-</style>
+<style></style>
 
 <script>
 export default {

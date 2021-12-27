@@ -1,20 +1,15 @@
 <template>
-  <div class="home">
-    <v-main class="pt-2">
-      <RankingList />
-    </v-main>
+  <div>
+    <h1>T.Run 2022</h1>
+    <p>Der T.Run startet wieder im März 2022.</p>
   </div>
 </template>
 
 <script>
-import RankingList from "@/components/RankingList.vue";
 export default {
   name: "Home",
-  components: {
-    RankingList,
-  },
+  components: {},
 };
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>
