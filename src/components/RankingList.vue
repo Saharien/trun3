@@ -92,7 +92,7 @@ export default {
 
       async function getFetchData(urlToLoad, token) {
         const response = await fetch(urlToLoad, {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: { "x-custom-authorization": `Bearer ${token}` },
         });
         const myJson = await response.json();
         return myJson;
@@ -119,15 +119,19 @@ export default {
       await this.loadData();
     },
     setApril: function () {
+      this.timeSpan = 4;
       this.loadData();
     },
     setMai: function () {
+      this.timeSpan = 5;
       this.loadData();
     },
     setJuni: function () {
+      this.timeSpan = 6;
       this.loadData();
     },
     setSum: function () {
+      this.timeSpan = "S";
       this.loadData();
     },
   },

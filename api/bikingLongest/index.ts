@@ -8,7 +8,7 @@ const httpTrigger: AzureFunction = async function (
   req: HttpRequest
 ): Promise<void> {
   try {
-    await verifyToken(req.headers.authorization);
+    await verifyToken(req);
   } catch (error) {
     context.res = { status: 401, body: { message: error.message } };
     return;

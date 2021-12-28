@@ -1,10 +1,11 @@
+import { HttpRequest } from "@azure/functions";
 import { verify, decode } from "jsonwebtoken";
 import axios from "axios";
 
-export const verifyToken = async (authHeader: string) => {
+export const verifyToken = async (req: HttpRequest) => {
   await fetchJWKS("trun.eu.auth0.com");
 
-  const token = extractAuthenicationToken(authHeader);
+  const token = extractAuthenicationToken(req);
 
   const decodedToken = decode(token, { complete: true });
   const { header } = decodedToken;
@@ -80,8 +81,8 @@ function getJWKSSigningKey(kid) {
   return getJWKSSigningKeys().find((key) => key.kid === kid);
 }
 
-function extractAuthenicationToken(authHeader = "") {
-  const parts = authHeader.split(" ");
+function extractAuthenicationToken(req: HttpRequest) {
+  const parts = req.headers["x-custom-authorization"].split(" ");
 
   if (parts.length !== 2) {
     throw new Error("No authorization token was found");
