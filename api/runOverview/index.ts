@@ -41,7 +41,7 @@ const httpTrigger: AzureFunction = async function (
       data: runOverview,
     },
     headers: {
-      "Content-Type": "application/json",
+      "content-type": "application/json",
     },
   };
 };

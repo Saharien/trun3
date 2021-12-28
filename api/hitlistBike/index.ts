@@ -58,7 +58,7 @@ const httpTrigger: AzureFunction = async function (
       data: rides,
     },
     headers: {
-      "Content-Type": "application/json",
+      "content-type": "application/json",
     },
   };
 };

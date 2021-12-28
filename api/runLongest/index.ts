@@ -23,7 +23,7 @@ const httpTrigger: AzureFunction = async function (
       data: longestRides,
     },
     headers: {
-      "Content-Type": "application/json",
+      "content-type": "application/json",
     },
   };
 };
