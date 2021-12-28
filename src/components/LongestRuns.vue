@@ -31,10 +31,11 @@
 </template>
 
 <script>
+import { fetchData } from "../api/api";
+
 export default {
   data() {
     return {
-      apiUrl: "/api/runLongest",
       longestRuns: [],
     };
   },
@@ -47,15 +48,7 @@ export default {
     loadData: async function () {
       const token = await this.$auth.getTokenSilently();
 
-      async function getFetchData(urlToLoad, token) {
-        const response = await fetch(urlToLoad, {
-          headers: { "x-custom-authorization": `Bearer ${token}` },
-        });
-        const myJson = await response.json(); //extract JSON from the http response
-        return myJson;
-      }
-
-      getFetchData(this.apiUrl, token).then((a) => {
+      fetchData({ funcName: "runLongest", token }).then((a) => {
         this.longestRuns = a.data;
 
         this.longestRuns.forEach(function (element) {

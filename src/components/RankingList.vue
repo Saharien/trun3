@@ -49,8 +49,9 @@
 </template>
 
 <script>
+import { fetchData } from "../api/api";
+
 export default {
-  setup() {},
   data() {
     return {
       tab: null,
@@ -71,7 +72,6 @@ export default {
       dataToShow: "hitlistRun",
       runActivities: [],
       cycleActivities: [],
-      apiUrl: "/api",
     };
   },
   mounted: function () {
@@ -86,19 +86,12 @@ export default {
   },
   methods: {
     loadData: async function () {
-      const urlToLoad = `${this.apiUrl}/${this.dataToShow}?timeSpan=${this.timeSpan}`;
-
       const token = await this.$auth.getTokenSilently();
 
-      async function getFetchData(urlToLoad, token) {
-        const response = await fetch(urlToLoad, {
-          headers: { "x-custom-authorization": `Bearer ${token}` },
-        });
-        const myJson = await response.json();
-        return myJson;
-      }
-
-      const response = await getFetchData(urlToLoad, token);
+      const response = await fetchData({
+        funcName: `${this.dataToShow}?timeSpan=${this.timeSpan}`,
+        token,
+      });
       const data = response.data.map((element, index) => ({
         _id: element._id,
         distance:
@@ -112,11 +105,11 @@ export default {
     },
     showRuns: async function () {
       this.dataToShow = "hitlistRun";
-      await this.loadData();
+      this.loadData();
     },
     showBikings: async function () {
       this.dataToShow = "hitlistBike";
-      await this.loadData();
+      this.loadData();
     },
     setApril: function () {
       this.timeSpan = 4;
@@ -135,7 +128,6 @@ export default {
       this.loadData();
     },
   },
-  computed: {},
 };
 </script>
 
