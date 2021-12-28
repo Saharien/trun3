@@ -82,7 +82,8 @@ function getJWKSSigningKey(kid) {
 }
 
 function extractAuthenicationToken(req: HttpRequest) {
-  const parts = req.headers["x-custom-authorization"].split(" ");
+  const authHeader = req.headers["x-custom-authorization"] || "";
+  const parts = authHeader.split(" ");
 
   if (parts.length !== 2) {
     throw new Error("No authorization token was found");
