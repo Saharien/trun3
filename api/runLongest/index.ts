@@ -13,7 +13,12 @@ const httpTrigger: AzureFunction = async function (
     context.res = { status: 401, body: { message: error.message } };
     return;
   }
-  await initDBConnection();
+  try {
+    await initDBConnection();
+  } catch (error) {
+    context.res = { status: 500, body: { message: error.message } };
+    return;
+  }
 
   const longestRides = await Run.find().sort("-distance").limit(10);
 
