@@ -16,7 +16,7 @@
         depressed
         @click="login"
         v-if="!$auth.loading && !$auth.isAuthenticated"
-        >Einloggen</v-btn
+        >Login</v-btn
       >
       <v-btn
         class="ml-3 mt-3 mb-3"
@@ -24,7 +24,7 @@
         depressed
         @click="logout"
         v-if="!$auth.loading && $auth.isAuthenticated"
-        >Ausloggen</v-btn
+        >Logout</v-btn
       >
     </v-app-bar>
 

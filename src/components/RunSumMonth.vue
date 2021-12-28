@@ -18,6 +18,7 @@
 
 <script>
 import VueApexCharts from "vue-apexcharts";
+import { fetchData } from "../api/api";
 
 export default {
   components: {
@@ -25,17 +26,11 @@ export default {
   },
   data() {
     return {
-      apiUrl: "https://atlantis.mkarl.de:443/api/run/overview",
-      pass: "gi9k3C4F4FER",
       series: [
         {
           name: "2021",
           data: [],
         },
-        // {
-        //   name: "2020",
-        //   data: [8830.2, 6541.2, 6756.7],
-        // },
       ],
       chartOptions: {
         chart: {
@@ -100,19 +95,10 @@ export default {
     loadData: async function () {
       const token = await this.$auth.getTokenSilently();
 
-      async function getFetchData(urlToLoad, pass, token) {
-        const response = await fetch(urlToLoad, {
-          headers: { pass: pass, Authorization: `Bearer ${token}` },
-        });
-        const myJson = await response.json(); //extract JSON from the http response
-        return myJson;
-      }
-
-      getFetchData(this.apiUrl, this.pass, token).then((a) => {
+      fetchData({ funcName: "runOverview", token }).then((a) => {
         a.data.forEach((element) =>
           this.series[0].data.push(element.totalAmount)
         );
-        console.log(this.series);
       });
     },
   },

@@ -3,7 +3,7 @@
     <v-card-title>
       <h1>Rangliste</h1>
       <v-spacer></v-spacer>
-      <v-btn-toggle class="pl-3" v-model="toggleTimespan" borderless>
+      <v-btn-toggle class="pl-3" v-model="timeSpan" borderless>
         <v-btn value="4" v-on:click="setApril">
           <span>APR</span>
         </v-btn>
@@ -49,54 +49,49 @@
 </template>
 
 <script>
+import { fetchData } from "../api/api";
+
 export default {
-  setup() {},
   data() {
     return {
       tab: null,
       headersRun: [
         { text: "Platz", value: "rank" },
         { text: "Name", value: "_id.name" },
-        { text: "Strecke", value: "distance" },
+        { text: "Strecke in km", value: "distance" },
       ],
       headersCycle: [
         { text: "Platz", value: "rank" },
         { text: "Name", value: "_id.name" },
-        { text: "Strecke", value: "distance" },
-        { text: "Anstieg", value: "heightMeter" },
+        { text: "Strecke in km", value: "distance" },
+        { text: "Anstieg in hm", value: "heightMeter" },
       ],
       toggleSport: 0,
-      toggleTimespan: "6",
 
-      timeSpan: "5",
+      timeSpan: "S",
+      dataToShow: "hitlistRun",
       runActivities: [],
       cycleActivities: [],
-      //apiUrl: "http://localhost:80/api",
-      apiUrl: "https://atlantis.mkarl.de:443/api",
-      pass: "gi9k3C4F4FER",
-      urlToLoad: "",
     };
   },
   mounted: function () {
     this.$nextTick(async () => {
-      this.runActivities = await this.loadData();
+      await this.loadData();
     });
+
+    const currentMonth = new Date().getMonth() + 1;
+    if ([4, 5, 6].includes(currentMonth)) {
+      this.timeSpan = currentMonth;
+    }
   },
   methods: {
-    loadData: async function (dataToShow = "run/hitlist") {
-      const urlToLoad = `${this.apiUrl}/${dataToShow}/${this.timeSpan}`;
-
+    loadData: async function () {
       const token = await this.$auth.getTokenSilently();
 
-      async function getFetchData(urlToLoad, pass, token) {
-        const response = await fetch(urlToLoad, {
-          headers: { pass: pass, Authorization: `Bearer ${token}` },
-        });
-        const myJson = await response.json(); //extract JSON from the http response
-        return myJson;
-      }
-
-      const response = await getFetchData(urlToLoad, this.pass, token);
+      const response = await fetchData({
+        funcName: `${this.dataToShow}?timeSpan=${this.timeSpan}`,
+        token,
+      });
       const data = response.data.map((element, index) => ({
         _id: element._id,
         distance:
@@ -105,15 +100,16 @@ export default {
         rank: index + 1,
       }));
 
-      return data;
+      if (this.dataToShow === "hitlistRun") this.runActivities = data;
+      if (this.dataToShow === "hitlistBike") this.cycleActivities = data;
     },
     showRuns: async function () {
-      if (this.runActivities.length === 0)
-        this.runActivities = await this.loadData("run/hitlist");
+      this.dataToShow = "hitlistRun";
+      this.loadData();
     },
     showBikings: async function () {
-      if (this.cycleActivities.length === 0)
-        this.cycleActivities = await this.loadData("biking/hitlist");
+      this.dataToShow = "hitlistBike";
+      this.loadData();
     },
     setApril: function () {
       this.timeSpan = 4;
@@ -132,7 +128,6 @@ export default {
       this.loadData();
     },
   },
-  computed: {},
 };
 </script>
 

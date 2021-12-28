@@ -1,8 +1,6 @@
 <template>
   <v-card title="">
-    <v-card-title>
-      Längste Läufe
-    </v-card-title>
+    <v-card-title> Längste Läufe </v-card-title>
     <v-list-item three-line>
       <v-list-item-content>
         <v-simple-table dense>
@@ -33,12 +31,11 @@
 </template>
 
 <script>
+import { fetchData } from "../api/api";
+
 export default {
   data() {
     return {
-      //apiUrl: "http://localhost:80/api/run/longest",
-      apiUrl: "https://atlantis.mkarl.de:443/api/run/longest",
-      pass: "gi9k3C4F4FER",
       longestRuns: [],
     };
   },
@@ -51,15 +48,7 @@ export default {
     loadData: async function () {
       const token = await this.$auth.getTokenSilently();
 
-      async function getFetchData(urlToLoad, pass, token) {
-        const response = await fetch(urlToLoad, {
-          headers: { pass: pass, Authorization: `Bearer ${token}` },
-        });
-        const myJson = await response.json(); //extract JSON from the http response
-        return myJson;
-      }
-
-      getFetchData(this.apiUrl, this.pass, token).then((a) => {
+      fetchData({ funcName: "runLongest", token }).then((a) => {
         this.longestRuns = a.data;
 
         this.longestRuns.forEach(function (element) {
