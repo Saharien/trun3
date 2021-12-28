@@ -22,6 +22,5 @@ pnpm-debug.log*
 *.sw?
 
 # This configuration file contains non-sensitive values relating to your Auth0 app. However, we recommend not committing this file into source control.
-auth_config.json
 
 local.settings*.json
