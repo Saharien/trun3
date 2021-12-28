@@ -57,13 +57,13 @@ export default {
       headersRun: [
         { text: "Platz", value: "rank" },
         { text: "Name", value: "_id.name" },
-        { text: "Strecke", value: "distance" },
+        { text: "Strecke in km", value: "distance" },
       ],
       headersCycle: [
         { text: "Platz", value: "rank" },
         { text: "Name", value: "_id.name" },
-        { text: "Strecke", value: "distance" },
-        { text: "Anstieg", value: "heightMeter" },
+        { text: "Strecke in km", value: "distance" },
+        { text: "Anstieg in hm", value: "heightMeter" },
       ],
       toggleSport: 0,
 
