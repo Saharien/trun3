@@ -1,6 +1,6 @@
 .DS_Store
 node_modules
-/dist
+dist
 
 
 # local env files
@@ -23,3 +23,5 @@ pnpm-debug.log*
 
 # This configuration file contains non-sensitive values relating to your Auth0 app. However, we recommend not committing this file into source control.
 auth_config.json
+
+local.settings*.json
