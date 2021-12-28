@@ -25,8 +25,7 @@ export default {
   },
   data() {
     return {
-      apiUrl: "https://atlantis.mkarl.de:443/api/run/overview",
-      pass: "gi9k3C4F4FER",
+      apiUrl: "/api/runOverview",
       series: [
         {
           name: "2021",
@@ -100,15 +99,15 @@ export default {
     loadData: async function () {
       const token = await this.$auth.getTokenSilently();
 
-      async function getFetchData(urlToLoad, pass, token) {
+      async function getFetchData(urlToLoad, token) {
         const response = await fetch(urlToLoad, {
-          headers: { pass: pass, Authorization: `Bearer ${token}` },
+          headers: { Authorization: `Bearer ${token}` },
         });
         const myJson = await response.json(); //extract JSON from the http response
         return myJson;
       }
 
-      getFetchData(this.apiUrl, this.pass, token).then((a) => {
+      getFetchData(this.apiUrl, token).then((a) => {
         a.data.forEach((element) =>
           this.series[0].data.push(element.totalAmount)
         );
