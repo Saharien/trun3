@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "install": "npm install --prefix api",
     "start:app": "vue-cli-service serve",
     "start:api": "npm run start --prefix api",
     "build": "vue-cli-service build",
