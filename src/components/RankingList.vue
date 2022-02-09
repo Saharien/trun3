@@ -45,6 +45,10 @@
         ></v-data-table>
       </v-tab-item>
     </v-tabs-items>
+
+    <v-overlay :value="busy">
+      <v-progress-circular indeterminate size="64"></v-progress-circular>
+    </v-overlay>
   </v-card>
 </template>
 
@@ -54,6 +58,7 @@ import { fetchData } from "../api/api";
 export default {
   data() {
     return {
+      busy: false,
       tab: null,
       headersRun: [
         { text: "Platz", value: "rank" },
@@ -86,13 +91,15 @@ export default {
   },
   methods: {
     loadData: async function () {
+      this.busy = true;
+
       const token = await this.$auth.getTokenSilently();
 
       const response = await fetchData({
         funcName: `${this.dataToShow}?timeSpan=${this.timeSpan}`,
         token,
       });
-      const data = response.data.map((element, index) => ({
+      const data = response.data?.map((element, index) => ({
         _id: element._id,
         distance:
           Math.round((element.totalAmount + Number.EPSILON) * 100) / 100,
@@ -102,6 +109,8 @@ export default {
 
       if (this.dataToShow === "hitlistRun") this.runActivities = data;
       if (this.dataToShow === "hitlistBike") this.cycleActivities = data;
+
+      this.busy = false;
     },
     showRuns: async function () {
       this.dataToShow = "hitlistRun";

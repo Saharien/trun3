@@ -27,6 +27,10 @@
         </v-simple-table>
       </v-list-item-content>
     </v-list-item>
+
+    <v-overlay :value="busy" absolute>
+      <v-progress-circular indeterminate size="64"></v-progress-circular>
+    </v-overlay>
   </v-card>
 </template>
 
@@ -36,6 +40,7 @@ import { fetchData } from "../api/api";
 export default {
   data() {
     return {
+      busy: false,
       longestBikings: [],
     };
   },
@@ -46,20 +51,23 @@ export default {
   },
   methods: {
     loadData: async function () {
+      this.busy = true;
+
       const token = await this.$auth.getTokenSilently();
 
-      fetchData({ funcName: "bikingLongest", token }).then((a) => {
-        this.longestBikings = a.data;
+      const response = await fetchData({ funcName: "bikingLongest", token });
+      this.longestBikings = response.data;
 
-        this.longestBikings.forEach(function (element) {
-          let dateObject = new Date(element.date);
-          element.formatedDate = dateObject.toLocaleDateString("de-DE", {
-            year: "numeric",
-            month: "short",
-            day: "numeric",
-          });
+      this.longestBikings.forEach(function (element) {
+        let dateObject = new Date(element.date);
+        element.formatedDate = dateObject.toLocaleDateString("de-DE", {
+          year: "numeric",
+          month: "short",
+          day: "numeric",
         });
       });
+
+      this.busy = false;
     },
   },
 };

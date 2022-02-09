@@ -13,6 +13,10 @@
         </div>
       </v-list-item-content>
     </v-list-item>
+
+    <v-overlay :value="busy" absolute>
+      <v-progress-circular indeterminate size="64"></v-progress-circular>
+    </v-overlay>
   </v-card>
 </template>
 
@@ -26,6 +30,7 @@ export default {
   },
   data() {
     return {
+      busy: false,
       series: [
         {
           name: "2021",
@@ -93,13 +98,15 @@ export default {
   },
   methods: {
     loadData: async function () {
+      this.busy = true;
       const token = await this.$auth.getTokenSilently();
 
-      fetchData({ funcName: "runOverview", token }).then((a) => {
-        a.data.forEach((element) =>
-          this.series[0].data.push(element.totalAmount)
-        );
-      });
+      const response = await fetchData({ funcName: "runOverview", token });
+      response.data.forEach((element) =>
+        this.series[0].data.push(element.totalAmount)
+      );
+
+      this.busy = false;
     },
   },
 };
