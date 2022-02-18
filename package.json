@@ -6,6 +6,7 @@
     "install": "npm install --prefix api",
     "start:app": "vue-cli-service serve",
     "start:api": "npm run start --prefix api",
+    "start:azurite": "npm run start:azurite --prefix api",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint"
   },

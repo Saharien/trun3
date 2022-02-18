@@ -12,10 +12,14 @@ npm install
 
 ## Development
 
-To start the local development the following two scripts are to be executed in different shells. The first script starts the backend (Azure Functions), the second script starts the Vue app.
+To start the local development the following three scripts are to be executed in different shells. The first script starts the backend (Azure Functions), the second script starts azurite and the third script starts the Vue app.
 
 ```
 npm run start:api
+```
+
+```
+npm run start:azurite
 ```
 
 ```
