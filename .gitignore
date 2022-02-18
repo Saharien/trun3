@@ -26,4 +26,5 @@ pnpm-debug.log*
 local.settings*.json
 
 api/azurite/*
+!api/azurite/.gitkeep
 azurite-debug.log
