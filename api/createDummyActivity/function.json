@@ -1,0 +1,11 @@
+{
+  "bindings": [
+    {
+      "name": "createDummyActivity",
+      "type": "timerTrigger",
+      "direction": "in",
+      "schedule": "0 */5 * * * *"
+    }
+  ],
+  "scriptFile": "../dist/createDummyActivity/index.js"
+}
