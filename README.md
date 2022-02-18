@@ -35,7 +35,9 @@ To start the API on the local development environment, the file `local.settings.
   "IsEncrypted": false,
   "Values": {
     "FUNCTIONS_WORKER_RUNTIME": "node",
-    "CosmosDbConnectionString": "<Mongo-Connection-String>"
+    "CosmosDbConnectionString": "<Mongo-Connection-String>",
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "AzureWebJobsDashboard": ""
   }
 }
 ```
