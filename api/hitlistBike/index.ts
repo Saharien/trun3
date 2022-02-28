@@ -1,10 +1,13 @@
-import { AzureFunction, Context, HttpRequest } from "@azure/functions";
+import { Context, HttpRequest } from "@azure/functions";
 import { initDBConnection } from "../lib/azure-cosmosdb-mongodb";
 import { Model as Bike } from "../lib/bike.model";
 import { verifyToken } from "../lib/jwt";
 import { buildResponseContext } from "../lib/context";
 
-const httpTrigger: AzureFunction = async function (
+const tRunYear: number =
+  parseInt(process.env.TRunYear) || new Date().getFullYear();
+
+export default async function (
   context: Context,
   req: HttpRequest
 ): Promise<void> {
@@ -26,8 +29,8 @@ const httpTrigger: AzureFunction = async function (
   let nextMonthInt: number;
 
   if (month == "S") {
-    monthInt = 4;
-    nextMonthInt = 7;
+    monthInt = 1;
+    nextMonthInt = 11;
   } else {
     monthInt = parseInt(month);
     nextMonthInt = monthInt + 1;
@@ -39,8 +42,8 @@ const httpTrigger: AzureFunction = async function (
     {
       $match: {
         date: {
-          $gte: new Date("2021-" + monthString + "-01"),
-          $lt: new Date("2021-" + nextMonthString + "-01"),
+          $gte: new Date(`${tRunYear}-${monthString}-01`),
+          $lt: new Date(`${tRunYear}-${nextMonthString}-01`),
         },
       },
     },
@@ -58,6 +61,4 @@ const httpTrigger: AzureFunction = async function (
   ]);
 
   context.res = buildResponseContext({ data: rides });
-};
-
-export default httpTrigger;
+}

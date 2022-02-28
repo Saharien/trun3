@@ -1,10 +1,10 @@
-import { AzureFunction, Context, HttpRequest } from "@azure/functions";
+import { Context, HttpRequest } from "@azure/functions";
 import { initDBConnection } from "../lib/azure-cosmosdb-mongodb";
 import { Model as Run } from "../lib/run.model";
 import { verifyToken } from "../lib/jwt";
 import { buildResponseContext } from "../lib/context";
 
-const httpTrigger: AzureFunction = async function (
+export default async function (
   context: Context,
   req: HttpRequest
 ): Promise<void> {
@@ -42,6 +42,4 @@ const httpTrigger: AzureFunction = async function (
   ]);
 
   context.res = buildResponseContext({ data: runOverview });
-};
-
-export default httpTrigger;
+}
