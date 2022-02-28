@@ -1,0 +1,11 @@
+{
+  "bindings": [
+    {
+      "name": "myTimer",
+      "type": "timerTrigger",
+      "direction": "in",
+      "schedule": "0 0 6-22 * * *"
+    }
+  ],
+  "scriptFile": "../dist/getEnrichedClubActivities/index.js"
+}
