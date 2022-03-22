@@ -8,19 +8,9 @@ export default async function (
 ): Promise<void> {
   try {
     const apiKey = new URL(req.url).searchParams.get("apiKey");
-    if (!apiKey || apiKey !== process.env.cronApiKey) throw new Error();
-
-    // const auth = req.headers["authorization"];
-    // if (!auth) throw new Error();
-
-    // const creds = Buffer.from(auth.split(" ")[1], "base64")
-    //   .toString()
-    //   .split(":");
-    // const username = creds[0];
-    // const password = creds[1];
-
-    // if (username !== process.env.cronUser && password !== process.env.cronPass)
-    //   throw new Error();
+    if (!apiKey || apiKey !== process.env.cronApiKey) {
+      throw new Error("API-Key is wrong!");
+    }
   } catch (error) {
     context.res = buildResponseContext({ status: 401, message: error.message });
     return;

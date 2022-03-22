@@ -15,7 +15,7 @@ export default async function (context: Context, myTimer?: any): Promise<void> {
   );
   const stravaClient = new strava.client(token.access_token);
 
-  await createDummy(strava);
+  await createDummy(stravaClient);
 
   if (stravaClient.rateLimiting.exceeded()) {
     console.error(
