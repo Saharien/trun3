@@ -29,8 +29,8 @@ export default async function (
   let nextMonthInt: number;
 
   if (month == "S") {
-    monthInt = 1;
-    nextMonthInt = 11;
+    monthInt = 4;
+    nextMonthInt = 7;
   } else {
     monthInt = parseInt(month);
     nextMonthInt = monthInt + 1;
