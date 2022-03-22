@@ -14,4 +14,5 @@ export interface IActivity {
   minimum_pace_exceeded: boolean;
   maximum_pace_exceeded: boolean;
   kmh: number;
+  elevgain: number;
 }

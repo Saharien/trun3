@@ -11,6 +11,7 @@ import { Model as RunModel } from "../lib/run.model";
 import { Model as BikeModel } from "../lib/bike.model";
 import { IActivity } from "../lib/types";
 import { initDBConnection } from "../lib/azure-cosmosdb-mongodb";
+import { ClubActivity } from "strava-v3";
 const strava = require("strava-v3");
 
 export default async function (context: Context, myTimer?: any): Promise<void> {
@@ -25,7 +26,7 @@ export default async function (context: Context, myTimer?: any): Promise<void> {
   );
   const stravaClient = new strava.client(token.access_token);
 
-  const Activities = await stravaClient.clubs.listActivities({
+  const Activities: ClubActivity[] = await stravaClient.clubs.listActivities({
     id: process.env.STRAVA_CLUB_ID,
     page: 1,
     per_page: 200,
@@ -100,35 +101,36 @@ function enrichClubMembers(Members) {
   return Members;
 }
 
-function enrichActivies(Activities, Members): IActivity[] {
+function enrichActivies(Activities: ClubActivity[], Members): IActivity[] {
   let aEnrichedActivity: IActivity[] = [];
   let currentDate = new Date();
 
   for (let i = 0; i < Activities.length; i++) {
-    let oActivity = Activities[i];
+    let oActivity: IActivity = Activities[i] as any;
 
-    if (isDummyActivity(oActivity) === true) {
+    if (isDummyActivity(Activities[i]) === true) {
       const ActivityDate = new Date(oActivity.name.substring(0, 10));
       currentDate = ActivityDate;
     } else {
       // new Properties
-      oActivity.type = getMainType(oActivity.type).maintype;
-      oActivity.name = `${(oActivity as any).athlete.firstname} ${
-        (oActivity as any).athlete.lastname
-      }`;
+      oActivity.type = getMainType(Activities[i].type).maintype;
+      oActivity.name = `${Activities[i].athlete.firstname} ${Activities[i].athlete.lastname}`;
       const maintype_setting = getMainTypeSettings(oActivity.type);
 
-      oActivity.elevgain = oActivity.total_elevation_gain;
+      oActivity.elevgain = Activities[i].total_elevation_gain;
       oActivity.date = currentDate;
       oActivity.dummyid = buildUniqueId(oActivity);
       oActivity.nameconflict = getClubMemberNameConflict(Members, oActivity);
-      oActivity.distance = oActivity.distance / 1000;
-      oActivity.cent = oActivity.distance * maintype_setting.centprokm;
-      oActivity.elapsed_time = oActivity.elapsed_time / 60;
-      oActivity.moving_time = oActivity.moving_time / 60;
-      oActivity.elapsed_duration = timeConvert(oActivity.elapsed_time);
-      oActivity.moving_time_duration = timeConvert(oActivity.moving_time);
-      oActivity.pace = calculatePace(oActivity.moving_time, oActivity.distance);
+      oActivity.distance = Activities[i].distance / 1000;
+      oActivity.cent = Activities[i].distance * maintype_setting.centprokm;
+      oActivity.elapsed_time = Activities[i].elapsed_time / 60;
+      oActivity.moving_time = Activities[i].moving_time / 60;
+      oActivity.elapsed_duration = timeConvert(Activities[i].elapsed_time);
+      oActivity.moving_time_duration = timeConvert(Activities[i].moving_time);
+      oActivity.pace = calculatePace(
+        Activities[i].moving_time,
+        Activities[i].distance
+      );
       oActivity.minimum_pace_exceeded = false;
       oActivity.maximum_pace_exceeded = false;
       oActivity.kmh = 60 / oActivity.pace;

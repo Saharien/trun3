@@ -1,3 +1,5 @@
+import { ClubActivity } from "strava-v3";
+
 var trun_settings = {};
 export const DummySuffix = "ClubStats_Date";
 
@@ -43,7 +45,7 @@ export function getTechnicalUser() {
   return { firstname: "Team", lastname: "R." };
 }
 
-export function isDummyActivity(Activity) {
+export function isDummyActivity(Activity: ClubActivity) {
   if (
     Activity.name.substring(11, 26) === DummySuffix ||
     (Activity.athlete.firstname === technicalUser.firstname &&
