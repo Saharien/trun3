@@ -9,6 +9,9 @@ export interface Bike {
   elevgain: number;
   type: string;
   date: Date;
+
+  kmh: number;
+  pace: number;
 }
 
 export const Schema = new MongooseSchema({
@@ -20,6 +23,9 @@ export const Schema = new MongooseSchema({
   elevgain: Number,
   type: String,
   date: Date,
+
+  kmh: Number,
+  pace: Number,
 });
 
 Schema.index({

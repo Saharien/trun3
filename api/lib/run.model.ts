@@ -7,6 +7,9 @@ export interface Run {
   name: string;
   distance: number;
   date: Date;
+
+  kmh: number;
+  pace: number;
 }
 
 export const Schema = new MongooseSchema<Run>({
@@ -16,6 +19,9 @@ export const Schema = new MongooseSchema<Run>({
   name: String,
   distance: Number,
   date: Date,
+
+  kmh: Number,
+  pace: Number,
 });
 
 Schema.index({

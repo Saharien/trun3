@@ -58,10 +58,10 @@ export default async function (context: Context, myTimer?: any): Promise<void> {
 async function saveActivities(aActivities: IActivity[]): Promise<any> {
   return Promise.all([
     RunModel.insertMany(
-      aActivities.filter((activity) => activity.maintype === mainTypeEnum.Run)
+      aActivities.filter((activity) => activity.type === mainTypeEnum.Run)
     ),
     BikeModel.insertMany(
-      aActivities.filter((activity) => activity.maintype === mainTypeEnum.Bike)
+      aActivities.filter((activity) => activity.type === mainTypeEnum.Bike)
     ),
   ]);
 }
@@ -104,33 +104,29 @@ function enrichActivies(Activities, Members): IActivity[] {
   let currentDate = new Date();
 
   for (let i = 0; i < Activities.length; i++) {
-    let oActivity = Activities[i];
+    let oActivity: IActivity = Activities[i];
 
     if (isDummyActivity(oActivity) === true) {
       const ActivityDate = new Date(oActivity.name.substring(0, 10));
       currentDate = ActivityDate;
     } else {
       // new Properties
-      oActivity.maintype = getMainType(oActivity.type).maintype;
-      const maintype_setting = getMainTypeSettings(oActivity.maintype);
+      oActivity.type = getMainType(oActivity.type).maintype;
+      oActivity.name = `${(oActivity as any).athlete.firstname} ${
+        (oActivity as any).athlete.lastname
+      }`;
+      const maintype_setting = getMainTypeSettings(oActivity.type);
 
       oActivity.date = currentDate;
       oActivity.dummyid = buildUniqueId(oActivity);
       oActivity.nameconflict = getClubMemberNameConflict(Members, oActivity);
-      oActivity.distanceinkm = oActivity.distance / 1000;
-      oActivity.cent = oActivity.distanceinkm * maintype_setting.centprokm;
-      oActivity.elapsed_time_in_minutes = oActivity.elapsed_time / 60;
-      oActivity.moving_time_in_minutes = oActivity.moving_time / 60;
-      oActivity.elapsed_duration = timeConvert(
-        oActivity.elapsed_time_in_minutes
-      );
-      oActivity.moving_time_duration = timeConvert(
-        oActivity.moving_time_in_minutes
-      );
-      oActivity.pace = calculatePace(
-        oActivity.moving_time_in_minutes,
-        oActivity.distanceinkm
-      );
+      oActivity.distance = oActivity.distance / 1000;
+      oActivity.cent = oActivity.distance * maintype_setting.centprokm;
+      oActivity.elapsed_time = oActivity.elapsed_time / 60;
+      oActivity.moving_time = oActivity.moving_time / 60;
+      oActivity.elapsed_duration = timeConvert(oActivity.elapsed_time);
+      oActivity.moving_time_duration = timeConvert(oActivity.moving_time);
+      oActivity.pace = calculatePace(oActivity.moving_time, oActivity.distance);
       oActivity.minimum_pace_exceeded = false;
       oActivity.maximum_pace_exceeded = false;
       oActivity.kmh = 60 / oActivity.pace;

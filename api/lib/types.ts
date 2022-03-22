@@ -1,16 +1,17 @@
 export interface IActivity {
+  name: string;
   date: Date;
   dummyid: string;
   nameconflict: boolean;
-  maintype: string;
-  distanceinkm: Number;
-  cent: Number;
-  elapsed_time_in_minutes: Number;
-  moving_time_in_minutes: Number;
+  type: string;
+  distance: number;
+  cent: number;
+  elapsed_time: number;
+  moving_time: number;
   elapsed_duration: string;
   moving_time_duration: string;
-  pace: Number;
+  pace: number;
   minimum_pace_exceeded: boolean;
   maximum_pace_exceeded: boolean;
-  kmh: Number;
+  kmh: number;
 }
