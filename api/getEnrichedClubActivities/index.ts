@@ -30,6 +30,7 @@ export default async function (context: Context, myTimer?: any): Promise<void> {
     page: 1,
     per_page: 200,
   });
+
   const Members = await stravaClient.clubs.listMembers({
     id: process.env.STRAVA_CLUB_ID,
     page: 1,
@@ -104,7 +105,7 @@ function enrichActivies(Activities, Members): IActivity[] {
   let currentDate = new Date();
 
   for (let i = 0; i < Activities.length; i++) {
-    let oActivity: IActivity = Activities[i];
+    let oActivity = Activities[i];
 
     if (isDummyActivity(oActivity) === true) {
       const ActivityDate = new Date(oActivity.name.substring(0, 10));
@@ -117,6 +118,7 @@ function enrichActivies(Activities, Members): IActivity[] {
       }`;
       const maintype_setting = getMainTypeSettings(oActivity.type);
 
+      oActivity.elevgain = oActivity.total_elevation_gain;
       oActivity.date = currentDate;
       oActivity.dummyid = buildUniqueId(oActivity);
       oActivity.nameconflict = getClubMemberNameConflict(Members, oActivity);

@@ -12,6 +12,7 @@ export interface Bike {
 
   kmh: number;
   pace: number;
+  nameconflict: boolean;
 }
 
 export const Schema = new MongooseSchema({
@@ -26,6 +27,7 @@ export const Schema = new MongooseSchema({
 
   kmh: Number,
   pace: Number,
+  nameconflict: Boolean,
 });
 
 Schema.index({

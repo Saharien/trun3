@@ -10,6 +10,7 @@ export interface Run {
 
   kmh: number;
   pace: number;
+  nameconflict: boolean;
 }
 
 export const Schema = new MongooseSchema<Run>({
@@ -22,6 +23,7 @@ export const Schema = new MongooseSchema<Run>({
 
   kmh: Number,
   pace: Number,
+  nameconflict: Boolean,
 });
 
 Schema.index({
