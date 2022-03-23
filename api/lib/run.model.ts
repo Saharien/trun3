@@ -1,9 +1,8 @@
 import { Schema as MongooseSchema, model as MongooseModel } from "mongoose";
 
-export interface Run {
-  activity: string;
-  url: string;
-  timestamp: Date;
+export interface IRun {
+  dummyid: string;
+  mainType: string;
   name: string;
   distance: number;
   date: Date;
@@ -11,12 +10,14 @@ export interface Run {
   kmh: number;
   pace: number;
   nameconflict: boolean;
+  cent: number;
+  minimum_pace_exceeded: boolean;
+  maximum_pace_exceeded: boolean;
 }
 
-export const Schema = new MongooseSchema<Run>({
-  activity: String,
-  url: String,
-  timestamp: String,
+export const Schema = new MongooseSchema<IRun>({
+  dummyid: String,
+  mainType: String,
   name: String,
   distance: Number,
   date: Date,
@@ -24,10 +25,13 @@ export const Schema = new MongooseSchema<Run>({
   kmh: Number,
   pace: Number,
   nameconflict: Boolean,
+  cent: Number,
+  minimum_pace_exceeded: Boolean,
+  maximum_pace_exceeded: Boolean,
 });
 
 Schema.index({
   distance: -1,
 });
 
-export const Model = MongooseModel<Run>("Run", Schema);
+export const Model = MongooseModel<IRun>("Run", Schema);

@@ -1,37 +1,39 @@
 import { Schema as MongooseSchema, model as MongooseModel } from "mongoose";
 
-export interface Bike {
-  activity: string;
-  url: string;
-  timestamp: Date;
+export interface IBike {
+  dummyid: string;
+  mainType: string;
   name: string;
   distance: number;
-  elevgain: number;
-  type: string;
   date: Date;
+  elevgain: number;
 
   kmh: number;
   pace: number;
   nameconflict: boolean;
+  cent: number;
+  minimum_pace_exceeded: boolean;
+  maximum_pace_exceeded: boolean;
 }
 
-export const Schema = new MongooseSchema({
-  activity: String,
-  url: String,
-  timestamp: String,
+export const Schema = new MongooseSchema<IBike>({
+  dummyid: String,
+  mainType: String,
   name: String,
   distance: Number,
   elevgain: Number,
-  type: String,
   date: Date,
 
   kmh: Number,
   pace: Number,
   nameconflict: Boolean,
+  cent: Number,
+  minimum_pace_exceeded: Boolean,
+  maximum_pace_exceeded: Boolean,
 });
 
 Schema.index({
   distance: -1,
 });
 
-export const Model = MongooseModel("Biking", Schema);
+export const Model = MongooseModel<IBike>("Biking", Schema);

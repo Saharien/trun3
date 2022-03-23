@@ -60,10 +60,10 @@ export default async function (context: Context, myTimer?: any): Promise<void> {
 async function saveActivities(aActivities: IActivity[]): Promise<any> {
   return Promise.all([
     RunModel.insertMany(
-      aActivities.filter((activity) => activity.type === mainTypeEnum.Run)
+      aActivities.filter((activity) => activity.mainType === mainTypeEnum.Run)
     ),
     BikeModel.insertMany(
-      aActivities.filter((activity) => activity.type === mainTypeEnum.Bike)
+      aActivities.filter((activity) => activity.mainType === mainTypeEnum.Bike)
     ),
   ]);
 }
@@ -92,7 +92,7 @@ function enrichClubMembers(Members) {
 
   if (Members.length === 200) {
     console.warn(
-      "WARNING - Anzahl Mitglieder überschreitet Paging von 200! Es fehlen vermutlich welche"
+      "WARNING - Anzahl Mitglieder überschreitet Paging von 200! Es fehlen vermutlich welche!"
     );
   } else {
     console.info("Count Club members " + Members.length);
@@ -101,66 +101,70 @@ function enrichClubMembers(Members) {
   return Members;
 }
 
-function enrichActivies(Activities: ClubActivity[], Members): IActivity[] {
-  let aEnrichedActivity: IActivity[] = [];
+function enrichActivies(Activities: ClubActivity[], members): IActivity[] {
+  let trunActivities: IActivity[] = [];
   let currentDate = new Date();
 
-  for (let i = 0; i < Activities.length; i++) {
-    let oActivity: IActivity = Activities[i] as any;
-
-    if (isDummyActivity(Activities[i]) === true) {
-      const ActivityDate = new Date(oActivity.name.substring(0, 10));
-      currentDate = ActivityDate;
+  for (const clubActivity of Activities) {
+    if (isDummyActivity(clubActivity) === true) {
+      currentDate = new Date(clubActivity.name.substring(0, 10));
     } else {
-      // new Properties
-      oActivity.type = getMainType(Activities[i].type).maintype;
-      oActivity.name = `${Activities[i].athlete.firstname} ${Activities[i].athlete.lastname}`;
-      const maintype_setting = getMainTypeSettings(oActivity.type);
+      const activityMainType = getMainType(clubActivity.type).maintype;
+      const mainTypeSettings = getMainTypeSettings(activityMainType);
+      const normalizedDistance = clubActivity.distance / 1000;
+      const normalizedMovingTime = clubActivity.moving_time / 60;
+      const normalizedElapsedTime = clubActivity.elapsed_time / 60;
+      const pace = calculatePace(normalizedMovingTime, normalizedDistance);
 
-      oActivity.elevgain = Activities[i].total_elevation_gain;
-      oActivity.date = currentDate;
-      oActivity.dummyid = buildUniqueId(oActivity);
-      oActivity.nameconflict = getClubMemberNameConflict(Members, oActivity);
-      oActivity.distance = Activities[i].distance / 1000;
-      oActivity.cent = Activities[i].distance * maintype_setting.centprokm;
-      oActivity.elapsed_time = Activities[i].elapsed_time / 60;
-      oActivity.moving_time = Activities[i].moving_time / 60;
-      oActivity.elapsed_duration = timeConvert(Activities[i].elapsed_time);
-      oActivity.moving_time_duration = timeConvert(Activities[i].moving_time);
-      oActivity.pace = calculatePace(
-        Activities[i].moving_time,
-        Activities[i].distance
-      );
-      oActivity.minimum_pace_exceeded = false;
-      oActivity.maximum_pace_exceeded = false;
-      oActivity.kmh = 60 / oActivity.pace;
+      const trunActivity: IActivity = {
+        mainType: activityMainType,
+        name: `${clubActivity.athlete.firstname} ${clubActivity.athlete.lastname}`,
+        elevgain: clubActivity.total_elevation_gain,
+        date: currentDate,
+        dummyid: buildUniqueId({
+          type: activityMainType,
+          firstname: clubActivity.athlete.firstname,
+          lastname: clubActivity.athlete.lastname,
+          elapsed_time: normalizedElapsedTime,
+          distance: clubActivity.distance,
+          date: currentDate,
+        }),
+        nameconflict: getClubMemberNameConflict(members, clubActivity),
+        distance: normalizedDistance,
+        cent: normalizedDistance * mainTypeSettings.centprokm,
+        elapsed_time: normalizedElapsedTime,
+        moving_time: normalizedMovingTime,
+        elapsed_duration: timeConvert(normalizedElapsedTime),
+        moving_time_duration: timeConvert(normalizedMovingTime),
+        pace: pace,
+        kmh: 60 / pace,
+        minimum_pace_exceeded:
+          pace > mainTypeSettings.minimum_pace ? true : false,
+        maximum_pace_exceeded:
+          pace < mainTypeSettings.maximum_pace ? true : false,
+      };
 
-      if (oActivity.pace > maintype_setting.minimum_pace) {
-        oActivity.minimum_pace_exceeded = true;
-      }
-
-      if (oActivity.pace < maintype_setting.maximum_pace) {
-        oActivity.maximum_pace_exceeded = true;
-      }
-
-      aEnrichedActivity.push(oActivity);
+      trunActivities.push(trunActivity);
     }
   }
 
-  return aEnrichedActivity;
+  return trunActivities;
 }
 
 // gets Club member
-function getClubMemberNameConflict(Members, Activity) {
-  let bNameConflict = false;
-  for (let j = 0; j < Members.length; j++) {
+function getClubMemberNameConflict(
+  members: { firstname: string; lastname: string; nameconflict: boolean }[],
+  activity: ClubActivity
+): boolean {
+  let nameConflict = false;
+  for (const member of members) {
     if (
-      Members[j].firstname === Activity.athlete.firstname &&
-      Members[j].lastname === Activity.athlete.lastname
+      member.firstname === activity.athlete.firstname &&
+      member.lastname === activity.athlete.lastname
     ) {
-      bNameConflict = Members[j].nameconflict;
+      nameConflict = member.nameconflict;
     }
   }
 
-  return bNameConflict;
+  return nameConflict;
 }

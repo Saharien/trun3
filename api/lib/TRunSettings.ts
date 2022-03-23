@@ -1,9 +1,8 @@
 import { ClubActivity } from "strava-v3";
 
-var trun_settings = {};
 export const DummySuffix = "ClubStats_Date";
 
-const mappingMainType = [
+const mappingMainType: IMainTypeMapping[] = [
   { type: "Run", maintype: "Run" },
   { type: "Ride", maintype: "Bike" },
   { type: "VirtualRun", maintype: "Run" },
@@ -22,34 +21,42 @@ export enum mainTypeEnum {
   Others = "Others",
 }
 
-const mainType = [
+const mainType: IMaintType[] = [
   {
     maintype: mainTypeEnum.Run,
-    centprokm: 0.2,
+    centprokm: 20,
     minimum_pace: 9.5,
     maximum_pace: 3,
   },
   {
     maintype: mainTypeEnum.Bike,
-    centprokm: 0.05,
+    centprokm: 5,
     minimum_pace: 7,
     maximum_pace: 2,
   },
-  { maintype: mainTypeEnum.Walking, centprokm: 0.2, maximum_pace: 9.5 },
-  { maintype: mainTypeEnum.Others, centprokm: 0 },
+  {
+    maintype: mainTypeEnum.Walking,
+    centprokm: 20,
+    minimum_pace: 0,
+    maximum_pace: 9.5,
+  },
+  {
+    maintype: mainTypeEnum.Others,
+    centprokm: 0,
+    minimum_pace: 0,
+    maximum_pace: 0,
+  },
 ];
-
-const technicalUser = { firstname: "Team", lastname: "R." };
 
 export function getTechnicalUser() {
   return { firstname: "Team", lastname: "R." };
 }
 
-export function isDummyActivity(Activity: ClubActivity) {
+export function isDummyActivity(Activity: ClubActivity): boolean {
   if (
     Activity.name.substring(11, 26) === DummySuffix ||
-    (Activity.athlete.firstname === technicalUser.firstname &&
-      Activity.athlete.firstname === technicalUser.lastname)
+    (Activity.athlete.firstname === getTechnicalUser().firstname &&
+      Activity.athlete.firstname === getTechnicalUser().lastname)
   ) {
     return true;
   } else {
@@ -57,8 +64,8 @@ export function isDummyActivity(Activity: ClubActivity) {
   }
 }
 
-export function getMainType(ActivityType) {
-  var maintype = { type: "Default", maintype: "Others" }; // Default
+export function getMainType(ActivityType: string): IMainTypeMapping {
+  let maintype = { type: "Default", maintype: "Others" }; // Default
 
   for (let i = 0; i < mappingMainType.length; i++) {
     if (mappingMainType[i].type === ActivityType) {
@@ -69,23 +76,40 @@ export function getMainType(ActivityType) {
   return maintype;
 }
 
-export function getMainTypeSettings(maintype) {
+export function getMainTypeSettings(activityMainType: string): IMaintType {
   for (let i = 0; i < mainType.length; i++) {
-    if (mainType[i].maintype === maintype) {
+    if (mainType[i].maintype === activityMainType) {
       return mainType[i];
     }
   }
 }
 
-export function buildUniqueId(Activity) {
-  const fieldsForId = [
-    Activity.type,
-    Activity.athlete.firstname,
-    Activity.athlete.lastname,
-    Activity.elapsed_time,
-    Activity.distance,
-    Activity.date.toISOString().substring(0, 10),
-  ];
+export function buildUniqueId(idFields: {
+  type: string;
+  firstname: string;
+  lastname: string;
+  elapsed_time: number;
+  distance: number;
+  date: Date;
+}): string {
+  return [
+    idFields.type,
+    idFields.firstname,
+    idFields.lastname,
+    idFields.elapsed_time.toFixed(5),
+    idFields.distance,
+    idFields.date.toISOString().substring(0, 10),
+  ].join("#");
+}
 
-  return fieldsForId.join("#");
+interface IMaintType {
+  maintype: mainTypeEnum;
+  centprokm: number;
+  minimum_pace: number;
+  maximum_pace: number;
+}
+
+interface IMainTypeMapping {
+  type: string;
+  maintype: string;
 }
