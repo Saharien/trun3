@@ -14,12 +14,8 @@
             </thead>
             <tbody>
               <tr v-for="run in longestRuns" :key="run.id">
-                <td>
-                  {{ run.formatedDate }}
-                </td>
-                <td>
-                  <a :href="run.url">{{ run.name }} </a>
-                </td>
+                <td>{{ run.formatedDate }}</td>
+                <td>{{ run.name }}</td>
                 <td>{{ run.distance }}</td>
               </tr>
             </tbody>

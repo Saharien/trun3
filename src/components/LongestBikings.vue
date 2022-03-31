@@ -14,12 +14,8 @@
             </thead>
             <tbody>
               <tr v-for="biking in longestBikings" :key="biking.id">
-                <td>
-                  {{ biking.formatedDate }}
-                </td>
-                <td>
-                  <a :href="biking.url">{{ biking.name }} </a>
-                </td>
+                <td>{{ biking.formatedDate }}</td>
+                <td>{{ biking.name }}</td>
                 <td>{{ biking.distance }}</td>
               </tr>
             </tbody>
