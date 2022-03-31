@@ -58,13 +58,24 @@ export default async function (context: Context, myTimer?: any): Promise<void> {
 }
 
 async function saveActivities(aActivities: IActivity[]): Promise<any> {
+  const [existingRuns, existingBikings] = await Promise.all([
+    RunModel.find({}, ["_id", "dummyid"]).exec(),
+    BikeModel.find({}, ["_id", "dummyid"]).exec(),
+  ]);
+
+  const existingRunIds = existingRuns.map((run) => run.dummyid);
+  const existingBikingIds = existingBikings.map((biking) => biking.dummyid);
+
+  const aRunsToInsert = aActivities
+    .filter((activity) => activity.mainType === mainTypeEnum.Run)
+    .filter((run) => !existingRunIds.includes(run.dummyid));
+  const aBikingsToInsert = aActivities
+    .filter((activity) => activity.mainType === mainTypeEnum.Bike)
+    .filter((biking) => !existingBikingIds.includes(biking.dummyid));
+
   return Promise.all([
-    RunModel.insertMany(
-      aActivities.filter((activity) => activity.mainType === mainTypeEnum.Run)
-    ),
-    BikeModel.insertMany(
-      aActivities.filter((activity) => activity.mainType === mainTypeEnum.Bike)
-    ),
+    RunModel.insertMany(aRunsToInsert),
+    BikeModel.insertMany(aBikingsToInsert),
   ]);
 }
 
