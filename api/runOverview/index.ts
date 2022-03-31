@@ -4,6 +4,9 @@ import { Model as Run } from "../lib/run.model";
 import { verifyToken } from "../lib/jwt";
 import { buildResponseContext } from "../lib/context";
 
+const tRunYear: number =
+  parseInt(process.env.TRunYear) || new Date().getFullYear();
+
 export default async function (
   context: Context,
   req: HttpRequest
@@ -25,8 +28,8 @@ export default async function (
     {
       $match: {
         date: {
-          $gte: new Date("2021-04-01"),
-          $lt: new Date("2021-07-01"),
+          $gte: new Date(`${tRunYear}-04-01`),
+          $lt: new Date(`${tRunYear}-07-01`),
         },
       },
     },
