@@ -57,13 +57,17 @@ export default {
       const response = await fetchData({ funcName: "runLongest", token });
       this.longestRuns = response.data;
 
-      this.longestRuns.forEach(function (element) {
-        let dateObject = new Date(element.date);
-        element.formatedDate = dateObject.toLocaleDateString("de-DE", {
+      this.longestRuns.map((run) => {
+        let dateObject = new Date(run.date);
+        run.formatedDate = dateObject.toLocaleDateString("de-DE", {
           year: "numeric",
           month: "short",
           day: "numeric",
         });
+
+        run.distance = run.distance.toFixed(2);
+
+        return run;
       });
 
       this.busy = false;

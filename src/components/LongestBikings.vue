@@ -58,13 +58,17 @@ export default {
       const response = await fetchData({ funcName: "bikingLongest", token });
       this.longestBikings = response.data;
 
-      this.longestBikings.forEach(function (element) {
-        let dateObject = new Date(element.date);
-        element.formatedDate = dateObject.toLocaleDateString("de-DE", {
+      this.longestBikings.map((ride) => {
+        let dateObject = new Date(ride.date);
+        ride.formatedDate = dateObject.toLocaleDateString("de-DE", {
           year: "numeric",
           month: "short",
           day: "numeric",
         });
+
+        ride.distance = ride.distance.toFixed(2);
+
+        return ride;
       });
 
       this.busy = false;
