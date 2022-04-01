@@ -54,9 +54,9 @@ async function createDummyActivity(maxDate, stravaClient) {
   while (maxDate.getUTCDate() < currentDate.getUTCDate() ||
          maxDate.getUTCMonth() < currentDate.getUTCMonth() ||
          maxDate.getUTCFullYear() < currentDate.getUTCFullYear()) {
-
+          
     // no dummy activity for current day Grabber uses that day as default
-    // prevent endless loop at all cost due to API limits
+    // prevent endless loop at all cost due to API limits!!
     if (
       maxDate.toISOString().substring(0, 10) ===
         currentDate.toISOString().substring(0, 10) ||
