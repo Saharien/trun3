@@ -31,7 +31,11 @@
       >
     </v-app-bar>
 
-    <v-navigation-drawer app clipped>
+    <v-navigation-drawer 
+      v-model="drawer"
+      app
+      clipped
+    >
       <v-list dense nav>
         <v-list-item link>
           <v-list-item-content>
