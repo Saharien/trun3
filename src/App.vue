@@ -38,7 +38,7 @@
         <v-list-item link v-if="!$auth.loading && $auth.isAuthenticated">
           <v-list-item-content>
             <v-list-item-title @click="gotoRoute('/hitlist')"
-              >Statistik</v-list-item-title
+              >Rangliste</v-list-item-title
             >
           </v-list-item-content>
         </v-list-item>
