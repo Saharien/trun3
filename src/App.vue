@@ -28,7 +28,7 @@
       >
     </v-app-bar>
 
-    <v-navigation-drawer app clipped>
+    <v-navigation-drawer app>
       <v-list dense nav>
         <v-list-item link>
           <v-list-item-content>
