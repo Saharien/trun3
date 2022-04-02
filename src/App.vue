@@ -1,9 +1,6 @@
 <template>
   <v-app app>
     <v-app-bar app clipped-left flat dark color="#46bfe0">
-      
-      <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
-      
       <v-img
         src="@/assets/logo.png"
         max-height="50"
@@ -32,7 +29,6 @@
     </v-app-bar>
 
     <v-navigation-drawer 
-      v-model="drawer"
       app
       clipped
     >
